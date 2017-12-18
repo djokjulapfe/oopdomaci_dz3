@@ -3,4 +3,30 @@ project(dz3)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(dz3 main.cpp FSObject.cpp FSObject.h FSVisitor.cpp FSVisitor.h File.cpp File.h Folder.cpp Folder.h SearchVisitor.cpp SearchVisitor.h FSOperation.cpp FSOperation.h FSException.cpp FSException.h AccessException.cpp AccessException.h OperationFailedException.cpp OperationFailedException.h NameCollisionException.cpp NameCollisionException.h WriteFailedException.cpp WriteFailedException.h Filesystem.cpp Filesystem.h AccessDescriptor.cpp AccessDescriptor.h)
+add_executable(dz3 main.cpp
+               FSObject.h
+               FSVisitor.h
+               File.h
+               Folder.h
+               SearchVisitor.h
+               FSOperation.h
+               FSException.h
+               AccessException.h
+               OperationFailedException.h
+               NameCollisionException.h
+               WriteFailedException.h
+               Filesystem.h
+               AccessDescriptor.h
+               FSObject.cpp
+               File.cpp
+               Folder.cpp
+               SearchVisitor.cpp
+               FSOperation.cpp
+               FSException.cpp
+               AccessException.cpp
+               OperationFailedException.cpp
+               NameCollisionException.cpp
+               WriteFailedException.cpp
+               Filesystem.cpp
+               AccessDescriptor.cpp
+               FSVisitor.cpp)

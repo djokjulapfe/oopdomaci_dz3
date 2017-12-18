@@ -3,15 +3,18 @@
 
 
 #include "FSVisitor.h"
+#include "FSObject.h"
+#include "Folder.h"
 
 class SearchVisitor : public FSVisitor {
 public:
-	void visitFile(File f) override;
+	void visitFile(File &f) override;
 
-	void visitFolder(Folder f) override;
+	void visitFolder(Folder &f) override;
 
 private:
 	std::vector<FSObject*> foundObjects;
+	std::string filepath;
 };
 
 

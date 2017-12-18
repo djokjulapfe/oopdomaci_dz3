@@ -2,8 +2,10 @@
 #define DZ3_FSOBJECT_H
 
 #include <string>
-#include "FSVisitor.h"
-#include "AccessDescriptor.h"
+#include <vector>
+class AccessDescriptor;
+class Folder;
+class FSVisitor;
 
 class FSObject {
 public:
@@ -12,11 +14,11 @@ public:
 
 	AccessDescriptor *getAccessDescriptor() const;
 
-	virtual void accept(FSVisitor v) = 0;
+	virtual void accept(FSVisitor &v) = 0;
 
 	virtual long size() = 0;
 
-	virtual FSObject copy() = 0;
+	virtual FSObject *copy() = 0;
 
 private:
 

@@ -1,16 +1,15 @@
 #ifndef DZ3_FSVISITOR_H
 #define DZ3_FSVISITOR_H
 
-
-#include "File.h"
-#include "Folder.h"
+class File;
+class Folder;
 
 class FSVisitor {
 public:
 
-	virtual void visitFile(File f);
+	virtual void visitFile(File &f) = 0;
 
-	virtual void visitFolder(Folder f);
+	virtual void visitFolder(Folder &f) = 0;
 };
 
 

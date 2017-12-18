@@ -7,7 +7,7 @@
 
 class FSOperation {
 public:
-	virtual void execute();
+	virtual void execute() = 0;
 
 	const std::string &getOpName() const;
 

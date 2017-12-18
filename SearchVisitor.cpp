@@ -1,9 +1,11 @@
 #include "SearchVisitor.h"
 
-void SearchVisitor::visitFile(File f) {
-	FSVisitor::visitFile(f);
+void SearchVisitor::visitFile(File &f) {
+
 }
 
-void SearchVisitor::visitFolder(Folder f) {
-	FSVisitor::visitFolder(f);
+void SearchVisitor::visitFolder(Folder &f) {
+	for (auto &&item : f.getObjects()) {
+		item->accept(*this);
+	}
 }

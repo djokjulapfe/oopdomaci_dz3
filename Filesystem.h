@@ -3,13 +3,14 @@
 
 
 #include "Folder.h"
+#include "File.h"
 
 using byte = unsigned char;
 
 class Filesystem {
 public:
 
-	Filesystem &Instance() {
+	static Filesystem &Instance() {
 		static Filesystem instance;
 		return instance;
 	}
@@ -18,13 +19,13 @@ public:
 
 	Filesystem(Filesystem &&) = delete;
 
-	void createFile(std::string fName, Folder parentFolder);
+	void createFile(std::string fName, Folder *parentFolder);
 
-	void createFolder(std::string fName, Folder parentFolder);
+	void createFolder(std::string fName, Folder *parentFolder);
 
 	std::vector<FSObject *> listFolder();
 
-	std::vector<byte> readFlie(File file);
+	std::vector<byte> readFlie(File *file);
 
 	void writeFile(std::vector<byte> content);
 
@@ -36,11 +37,11 @@ public:
 
 	std::vector<FSObject *> search(std::string objectName);
 
-	void copyPaste(FSObject objToCopy, Folder destFolder, std::string newName);
+	void copyPaste(FSObject *objToCopy, Folder *destFolder, std::string newName);
 
-	void move(FSObject objToMove, Folder destFolder);
+	void move(FSObject *objToMove, Folder *destFolder);
 
-	void deleteFile(FSObject objToDelete);
+	void deleteFile(FSObject *objToDelete);
 
 	long freeSpace();
 

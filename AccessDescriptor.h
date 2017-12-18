@@ -3,10 +3,20 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 class AccessDescriptor {
+public:
+	void add(std::string operationName);
+
+	void remove(std::string operationName);
+
+	bool checkAccess(std::string operationName);
+
+	const std::vector<std::string> &getAllowedOperations() const;
+
 private:
-	std::vector<std::string>
+	std::vector<std::string> allowedOperations;
 };
 
 

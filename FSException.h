@@ -9,10 +9,9 @@ public:
 
 	void FilesystemException(std::string msg);
 
-	const char *what() const override;
+	const char *what() const noexcept override;
 
-private:
-	FSException causedBy;
+	const FSException *causedBy;
 };
 
 

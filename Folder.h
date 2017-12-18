@@ -3,18 +3,23 @@
 
 
 #include <vector>
+#include <algorithm>
 #include "FSObject.h"
 #include "FSVisitor.h"
 
 class Folder : public FSObject {
 public:
-	void accept(FSVisitor v) override;
+	void accept(FSVisitor &v) override;
 
-	void add(FSObject o);
+	long size() override;
+
+	FSObject *copy() override;
+
+	void add(FSObject *o);
 
 	const std::vector<FSObject *> &getObjects() const;
 
-	void remove(FSObject o);
+	void remove(FSObject *o);
 
 private:
 	std::vector<FSObject *> objects;
