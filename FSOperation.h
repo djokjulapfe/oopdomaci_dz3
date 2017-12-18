@@ -7,12 +7,12 @@
 
 class FSOperation {
 public:
+	std::vector<FSObject *> objects;
+
 	virtual void execute() = 0;
 
-	const std::string &getOpName() const;
-
+	const std::string &getName() const;
 private:
-	std::vector<FSObject *> objects;
 	std::string opName;
 };
 

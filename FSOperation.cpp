@@ -1,5 +1,5 @@
 #include "FSOperation.h"
 
-const std::string &FSOperation::getOpName() const {
+const std::string &FSOperation::getName() const {
 	return opName;
 }
