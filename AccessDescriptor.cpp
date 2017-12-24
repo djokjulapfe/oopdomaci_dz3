@@ -16,4 +16,6 @@ bool AccessDescriptor::checkAccess(std::string operationName) {
 	return std::find(allowedOperations.begin(), allowedOperations.end(), operationName) != allowedOperations.end();
 }
 
+AccessDescriptor::AccessDescriptor() = default;
+
 

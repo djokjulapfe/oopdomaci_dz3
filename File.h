@@ -4,24 +4,28 @@
 
 #include "FSObject.h"
 #include "FSVisitor.h"
+#include "AccessDescriptor.h"
 
 using byte = unsigned char;
 
 class File : public FSObject {
 public:
+	explicit File(const std::string &name);
+
+	File();
+
 	void accept(FSVisitor &v) override;
 
 	long size() override;
 
 	FSObject *copy() override;
 
-	void write(std::vector<byte *> content);
+	void write(std::vector<byte> content);
 
-	std::vector<byte *> read();
+	std::vector<byte> &read();
 
 private:
-	std::string path;
-	std::vector<byte *> data;
+	std::vector<byte> data;
 };
 
 

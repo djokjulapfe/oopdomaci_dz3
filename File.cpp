@@ -13,12 +13,20 @@ FSObject *File::copy() {
 	return nullptr;
 }
 
-void File::write(std::vector<byte *> content) {
+void File::write(std::vector<byte> content) {
 	for (auto &&item : content) {
 		data.push_back(item);
 	}
 }
 
-std::vector<byte *> File::read() {
+std::vector<byte> &File::read() {
 	return data;
+}
+
+File::File(const std::string &name) : FSObject(name) {
+
+}
+
+File::File() : FSObject() {
+
 }

@@ -7,6 +7,8 @@
 
 class AccessDescriptor {
 public:
+	AccessDescriptor();
+
 	void add(std::string operationName);
 
 	void remove(std::string operationName);

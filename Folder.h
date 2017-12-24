@@ -4,11 +4,19 @@
 
 #include <vector>
 #include <algorithm>
+#include <iostream>
 #include "FSObject.h"
 #include "FSVisitor.h"
+#include "AccessDescriptor.h"
 
 class Folder : public FSObject {
 public:
+	explicit Folder(const std::string &name);
+
+	Folder();
+
+	~Folder();
+
 	void accept(FSVisitor &v) override;
 
 	long size() override;
@@ -21,8 +29,7 @@ public:
 
 	void remove(FSObject *o);
 
-private:
-	std::vector<FSObject *> objects;
+	std::vector<FSObject *> containedObjects;
 };
 
 

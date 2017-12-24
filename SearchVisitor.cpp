@@ -1,21 +1,24 @@
 #include "SearchVisitor.h"
-#include "AccessDescriptor.h"
 
 void SearchVisitor::visitFile(File &f) {
-	if (f.getName() == filepath) {
+	if (f.getName() == filename) {
 		foundObjects.push_back(&f);
 	}
 }
 
 void SearchVisitor::visitFolder(Folder &f) {
-	if (f.getName() == filepath) {
+	if (f.getName() == filename) {
 		foundObjects.push_back(&f);
 	}
-	for (auto &&item : f.getObjects()) {
-		auto acc = item->getAccessDescriptor()->getAllowedOperations();
-		if (std::find(acc.begin(), acc.end(), "ReadFile") == acc.end()) {
-			continue;
+	auto acc = f.getAccessDescriptor()->getAllowedOperations();
+	if (std::find(acc.begin(), acc.end(), "ReadFile") != acc.end()) {
+
+		for (auto &&item : f.getObjects()) {
+			item->accept(*this);
 		}
-		item->accept(*this);
+
 	}
+}
+
+SearchVisitor::SearchVisitor(const std::string &filename) : filename(filename) {
 }

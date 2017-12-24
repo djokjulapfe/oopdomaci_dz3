@@ -10,6 +10,12 @@ class FSVisitor;
 class FSObject {
 public:
 
+	explicit FSObject(const std::string &name);
+
+	FSObject();
+
+	virtual ~FSObject();
+
 	const std::string &getName() const;
 
 	AccessDescriptor *getAccessDescriptor() const;
@@ -20,11 +26,14 @@ public:
 
 	virtual FSObject *copy() = 0;
 
-private:
-
-	std::string name;
-	AccessDescriptor *accessDescriptor;
 	Folder *parent;
+
+	static int counter;
+
+	AccessDescriptor *accessDescriptor;
+
+protected:
+	std::string name;
 };
 
 

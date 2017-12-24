@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_executable(dz3 main.cpp
                FSObject.h
+               AccessDescriptor.h
                FSVisitor.h
                File.h
                Folder.h
@@ -16,7 +17,6 @@ add_executable(dz3 main.cpp
                NameCollisionException.h
                WriteFailedException.h
                Filesystem.h
-               AccessDescriptor.h
                FSObject.cpp
                File.cpp
                Folder.cpp
@@ -29,4 +29,4 @@ add_executable(dz3 main.cpp
                WriteFailedException.cpp
                Filesystem.cpp
                AccessDescriptor.cpp
-               FSVisitor.cpp ProtectedOperation.cpp ProtectedOperation.h)
+               FSVisitor.cpp ProtectedOperation.cpp ProtectedOperation.h ReadFile.cpp ReadFile.h)
