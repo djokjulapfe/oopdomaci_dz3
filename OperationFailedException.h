@@ -6,8 +6,7 @@
 
 class OperationFailedException : public FSException {
 public:
-	OperationFailedException(const std::string &msg, const FSException &cause);
-
+	OperationFailedException(const std::string &msg, const FSException *cause);
 };
 
 

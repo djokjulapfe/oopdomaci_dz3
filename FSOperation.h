@@ -12,7 +12,8 @@ public:
 	virtual void execute() = 0;
 
 	const std::string &getName() const;
-private:
+
+protected:
 	std::string opName;
 };
 

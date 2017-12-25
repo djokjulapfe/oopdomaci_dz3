@@ -6,7 +6,7 @@
 
 class NameCollisionException : public OperationFailedException {
 public:
-	NameCollisionException(const std::string &msg, const FSException &cause);
+	NameCollisionException(const std::string &msg, const FSException *cause);
 
 };
 

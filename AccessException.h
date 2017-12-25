@@ -6,7 +6,7 @@
 
 class AccessException : public FSException {
 public:
-	AccessException(const std::string &msg, const FSException &cause);
+	AccessException(const std::string &msg, const FSException *cause);
 
 };
 

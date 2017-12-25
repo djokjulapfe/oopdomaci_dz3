@@ -5,7 +5,7 @@
 
 class FSException : public std::exception {
 public:
-	FSException(const std::string &msg, const FSException &cause);
+	FSException(const std::string &msg, const FSException *cause);
 
 	void FilesystemException(std::string msg);
 

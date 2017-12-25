@@ -1,7 +1,9 @@
 #include <iostream>
 #include "Filesystem.h"
 #include "SearchVisitor.h"
-#include <random>
+#include "ReadFile.h"
+#include "Search.h"
+#include "AccessException.h"
 
 using byte = unsigned char;
 
@@ -114,6 +116,7 @@ void test1() {
 
 void test2() {
 	Folder *root = new Folder("/");
+	Folder *noaccess;
 	root->getAccessDescriptor()->add("ReadFile");
 	{
 		Folder *usr = new Folder("usr");
@@ -150,9 +153,10 @@ void test2() {
 			auto *tfile = new File;
 			std::vector<byte> tmpVector;
 			for (int j = 0; j < 1024; ++j) {
-				tmpVector.push_back((byte)rand());
+				tmpVector.push_back((byte) rand());
 			}
 			tfile->write(tmpVector);
+			tfile->getAccessDescriptor()->add("ReadFile");
 			tmp->add(tfile);
 		}
 
@@ -162,31 +166,52 @@ void test2() {
 			auto *tfile = new File(fname);
 			std::vector<byte> tmpVector;
 			for (int j = 0; j < 1024; ++j) {
-				tmpVector.push_back((byte)rand());
+				tmpVector.push_back((byte) rand());
 			}
 			tfile->write(tmpVector);
+			tfile->getAccessDescriptor()->add("ReadFile");
 			dev->add(tfile);
 		}
+		noaccess = dev;
 
 		home->add(djokjula);
 		home->add(gpu);
 
 		djokjula->add(dDocuments);
 		djokjula->add(dDownloads);
-		djokjula->add(new File("pera.png"));
+		File *tfile = new File("pera.png");
+		tfile->write(std::vector<byte>{'S', 'l', 'i', 'k', 'a'});
+		tfile->getAccessDescriptor()->add("ReadFile");
+		djokjula->add(tfile);
 
-		dDocuments->add(new File("pera.txt"));
+		tfile = new File("pera.txt");
+		tfile->write(std::vector<byte>{'Z', 'd', 'r', 'a', 'v', 'o'});
+		tfile->getAccessDescriptor()->add("ReadFile");
+		dDocuments->add(tfile);
 		dDocuments->add(dWork);
 
-		dWork->add(new File("pera.txt"));
+		tfile = new File("pera.txt");
+		tfile->write(std::vector<byte>{'s', 't', 'a'});
+		tfile->getAccessDescriptor()->add("ReadFile");
+		dWork->add(tfile);
 
-		dDownloads->add(new File("pera(2).txt"));
-		dDownloads->add(new File("pera.txt"));
+		tfile = new File("pera.txt");
+		tfile->write(std::vector<byte>{'I', 'm', 'a'});
+		tfile->getAccessDescriptor()->add("ReadFile");
+		dDownloads->add(tfile);
+
+		tfile = new File("pera(2).txt");
+		tfile->write(std::vector<byte>{'i', 'm', 'a'});
+		tfile->getAccessDescriptor()->add("ReadFile");
+		dDownloads->add(tfile);
 
 		gpu->add(gDocuments);
 
+		tfile = new File("pera.txt");
+		tfile->write(std::vector<byte>{'t', 'e', 'b', 'r', 'a'});
+		tfile->getAccessDescriptor()->add("ReadFile");
+		gDocuments->add(tfile);
 		gDocuments->add(new Folder("pera"));
-		gDocuments->add(new File("pera.txt"));
 	}
 
 	auto *printVisitor = new PrintVisitor();
@@ -195,9 +220,65 @@ void test2() {
 
 	auto *searchVisitor = new SearchVisitor("pera.txt");
 	root->accept(*searchVisitor);
-	std::cout << searchVisitor->foundObjects.size();
-	delete searchVisitor;
+	std::cout << searchVisitor->foundObjects.size() << std::endl;
 
+	// Read File
+
+	auto *readFile = new ReadFile(*(File *) searchVisitor->foundObjects[0]);
+	try {
+		readFile->execute();
+		printArray(readFile->data);
+	} catch (AccessException &e) {
+		std::cout << e.what();
+	}
+	delete readFile;
+
+	readFile = new ReadFile(*(File *) searchVisitor->foundObjects[1]);
+	try {
+		readFile->execute();
+		printArray(readFile->data);
+	} catch (AccessException &e) {
+		std::cout << e.what();
+	}
+	delete readFile;
+
+	readFile = new ReadFile(*(File *) searchVisitor->foundObjects[2]);
+
+	try {
+		readFile->execute();
+		printArray(readFile->data);
+		((File *) searchVisitor->foundObjects[2])->write(std::vector<byte>{1, 2, 3});
+	} catch (AccessException &e) {
+		std::cout << e.what();
+	}
+
+	try {
+		readFile->execute();
+		printArray(readFile->data);
+	} catch (AccessException &e) {
+		std::cout << e.what();
+	}
+	delete readFile;
+
+	auto *search = new Search(root, "pera.txt");
+	try {
+		search->execute();
+		std::cout << search->result.size() << std::endl;
+	} catch (AccessException &e) {
+		std::cout << e.what();
+	}
+	delete search;
+
+	search = new Search(noaccess, "pera.txt");
+	try {
+		search->execute();
+		std::cout << search->result.size() << std::endl;
+	} catch (AccessException &e) {
+		std::cout << e.what();
+	}
+	delete search;
+
+	delete searchVisitor;
 	delete root;
 }
 

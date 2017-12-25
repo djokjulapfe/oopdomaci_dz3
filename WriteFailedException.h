@@ -6,7 +6,7 @@
 
 class WriteFailedException : public OperationFailedException {
 public:
-	WriteFailedException(const std::string &msg, const FSException &cause);
+	WriteFailedException(const std::string &msg, const FSException *cause);
 
 };
 
