@@ -5,7 +5,7 @@
 #include "FSOperation.h"
 #include "Folder.h"
 
-class CopyPaste : FSOperation {
+class CopyPaste : public FSOperation {
 public:
 
 	CopyPaste(FSObject *object, Folder *destFolder, const std::string &newName);

@@ -6,6 +6,10 @@
 #include "WriteFailedException.h"
 #include "CopyPaste.h"
 #include "DeleteObject.h"
+#include "SizeCalculatorVisitor.h"
+
+Filesystem::Filesystem(unsigned int capacity) : capacity(capacity) {
+}
 
 void Filesystem::createFile(std::string fName, Folder *parentFolder) {
 	CreateFile createFile(parentFolder, fName);
@@ -149,7 +153,7 @@ void Filesystem::deleteObject(FSObject *objToDelete) {
 }
 
 long Filesystem::freeSpace() {
-	
-	// TODO: implement
-	return 0;
+	SizeCalculatorVisitor sizeCalculatorVisitor;
+	root->accept(sizeCalculatorVisitor);
+	return capacity - sizeCalculatorVisitor.getSize();
 }

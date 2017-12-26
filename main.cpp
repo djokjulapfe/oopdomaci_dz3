@@ -255,17 +255,17 @@ void test1() {
 
 	// Read File
 
-	auto *readFile = new ReadFile(*(File *) searchVisitor->foundObjects[0]);
+	auto *readFile = new ReadFile((File *) searchVisitor->foundObjects[0]);
 	readFile->execute();
 	printArray(readFile->data);
 	delete readFile;
 
-	readFile = new ReadFile(*(File *) searchVisitor->foundObjects[1]);
+	readFile = new ReadFile((File *) searchVisitor->foundObjects[1]);
 	readFile->execute();
 	printArray(readFile->data);
 	delete readFile;
 
-	readFile = new ReadFile(*(File *) searchVisitor->foundObjects[2]);
+	readFile = new ReadFile((File *) searchVisitor->foundObjects[2]);
 
 	readFile->execute();
 	printArray(readFile->data);
@@ -276,7 +276,7 @@ void test1() {
 	printArray(readFile->data);
 	delete readFile;
 
-	readFile = new ReadFile(*(File *) noaccess->getObjects()[1]);
+	readFile = new ReadFile((File *) noaccess->getObjects()[1]);
 	readFile->execute();
 	printArray(readFile->data);
 

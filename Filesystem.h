@@ -17,9 +17,13 @@ class Filesystem {
 public:
 
 	static Filesystem &Instance() {
-		static Filesystem instance;
+		static Filesystem instance(1000000);
 		return instance;
 	}
+
+	Filesystem() = delete;
+
+	explicit Filesystem(unsigned int capacity);
 
 	Filesystem(const Filesystem &) = delete;
 
@@ -49,14 +53,12 @@ public:
 
 	void deleteObject(FSObject *objToDelete);
 
-	long freeSpace();
 
+	long freeSpace();
 
 private:
 
 	unsigned capacity;
-
-	Filesystem() = default;
 
 	Folder *root;
 };
