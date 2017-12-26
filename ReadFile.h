@@ -7,7 +7,7 @@
 
 class ReadFile : public FSOperation {
 public:
-	explicit ReadFile(File &f);
+	explicit ReadFile(File *f);
 
 	void execute() override;
 

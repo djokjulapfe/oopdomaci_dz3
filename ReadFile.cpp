@@ -4,6 +4,6 @@ void ReadFile::execute() {
 	data = f->read();
 }
 
-ReadFile::ReadFile(File &f) : f(&f) {
+ReadFile::ReadFile(File *f) : f(f) {
 	opName = "ReadFile";
 }

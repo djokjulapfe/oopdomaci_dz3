@@ -4,6 +4,12 @@
 
 #include "Folder.h"
 #include "File.h"
+#include "CreateFile.h"
+#include "CreateFolder.h"
+#include "Move.h"
+#include "Search.h"
+#include "ReadFile.h"
+#include "ProtectedOperation.h"
 
 using byte = unsigned char;
 
@@ -23,11 +29,11 @@ public:
 
 	void createFolder(std::string fName, Folder *parentFolder);
 
-	std::vector<FSObject *> listFolder();
+	std::vector<FSObject *> listFolder(Folder *f);
 
 	std::vector<byte> readFlie(File *file);
 
-	void writeFile(std::vector<byte> content);
+	void writeFile(File * file, std::vector<byte> content);
 
 	void grantAccess(FSObject *fObj, std::string opName = nullptr);
 
@@ -41,12 +47,14 @@ public:
 
 	void move(FSObject *objToMove, Folder *destFolder);
 
-	void deleteFile(FSObject *objToDelete);
+	void deleteObject(FSObject *objToDelete);
 
 	long freeSpace();
 
 
 private:
+
+	unsigned capacity;
 
 	Filesystem() = default;
 
