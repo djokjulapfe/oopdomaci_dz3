@@ -14,7 +14,6 @@ public:
 	std::vector<FSObject *> result;
 
 private:
-	Folder *root;
 	std::string filename;
 };
 

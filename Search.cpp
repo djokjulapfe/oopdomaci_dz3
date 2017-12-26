@@ -4,13 +4,13 @@
 void Search::execute() {
 
 	auto *searchVisitor = new SearchVisitor(filename);
-	root->accept(*searchVisitor);
+	object->accept(*searchVisitor);
 	result = searchVisitor->foundObjects;
 	delete searchVisitor;
 
 }
 
-Search::Search(Folder *root, const std::string &filename) : root(root), filename(filename) {
+Search::Search(Folder *root, const std::string &filename) : FSOperation(root), filename(filename) {
 	opName = "Search";
 }
 

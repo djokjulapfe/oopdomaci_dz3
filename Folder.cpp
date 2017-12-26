@@ -17,8 +17,11 @@ long Folder::size() {
 }
 
 FSObject *Folder::copy() {
-	// TODO: implement
-	return nullptr;
+	Folder *newFolder = new Folder(name);
+	for (auto &&item : containedObjects) {
+		newFolder->add(item->copy());
+	}
+	return newFolder;
 }
 
 void Folder::add(FSObject *o) {
@@ -28,7 +31,7 @@ void Folder::add(FSObject *o) {
 
 void Folder::remove(FSObject *o) {
 	containedObjects.erase(std::remove(containedObjects.begin(), containedObjects.end(), o), containedObjects.end());
-	delete o;
+	//delete o;
 }
 
 Folder::Folder(const std::string &name) : FSObject(name) {

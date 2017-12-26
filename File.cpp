@@ -9,8 +9,9 @@ long File::size() {
 }
 
 FSObject *File::copy() {
-	// TODO: implement
-	return nullptr;
+	auto *newFile = new File(name);
+	newFile->write(this->data);
+	return newFile;
 }
 
 void File::write(std::vector<byte> content) {

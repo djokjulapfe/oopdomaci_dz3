@@ -6,6 +6,11 @@
 #include "ProtectedOperation.h"
 #include "AccessException.h"
 #include "CreateFile.h"
+#include "DeleteObject.h"
+#include "CreateFolder.h"
+#include "CopyPaste.h"
+#include "ListDirectory.h"
+#include "Move.h"
 
 using byte = unsigned char;
 
@@ -81,7 +86,8 @@ public:
 			if (in == "echo") {
 				std::cin >> in;
 				std::cout << in << std::endl;
-			} if (in == "touch") {
+			}
+			if (in == "touch") {
 				std::cin >> in; //folder name
 				currLocation->add(new File(in));
 			} else if (in == "mkdir") {
@@ -125,7 +131,7 @@ public:
 			} else if (dynamic_cast<Folder *>(currLocation->getObjects()[k]) != nullptr) {
 				currLocation = (Folder *) currLocation->getObjects()[k];
 			} else {
-				File * f = (File *) currLocation->getObjects()[k];
+				File *f = (File *) currLocation->getObjects()[k];
 				std::cout << "File: " << f->getName() << ": ";
 				printArray(f->read());
 			}
@@ -140,6 +146,7 @@ private:
 void test1() {
 	Folder *root = new Folder("/");
 	Folder *noaccess;
+	FSObject *rndObject;
 	root->getAccessDescriptor()->add("ReadFile");
 	{
 		Folder *usr = new Folder("usr");
@@ -226,6 +233,7 @@ void test1() {
 		tfile = new File("pera(2).txt");
 		tfile->write(std::vector<byte>{'i', 'm', 'a'});
 		tfile->getAccessDescriptor()->add("ReadFile");
+		rndObject = tfile; // TODO: HERE IS RNDOBJECT!
 		dDownloads->add(tfile);
 
 		gpu->add(gDocuments);
@@ -262,7 +270,7 @@ void test1() {
 	readFile->execute();
 	printArray(readFile->data);
 	((File *) searchVisitor->foundObjects[2])->write(std::vector<byte>{1, 2, 3});
-
+	delete searchVisitor;
 
 	readFile->execute();
 	printArray(readFile->data);
@@ -283,8 +291,8 @@ void test1() {
 	search->execute();
 	std::cout << search->result.size() << std::endl;
 	delete search;
-	search = new Search(noaccess, "pera.txt");
 
+	search = new Search(noaccess, "pera.txt");
 	auto *protectedOperation = new ProtectedOperation(search);
 	try {
 		protectedOperation->execute();
@@ -292,6 +300,7 @@ void test1() {
 	} catch (AccessException &e) {
 		std::cout << e.what();
 	}
+
 	delete protectedOperation;
 	delete search;
 
@@ -316,10 +325,43 @@ void test1() {
 	std::cout << search->result.size() << std::endl;
 
 	delete createFile;
-	delete search;
-	delete searchVisitor;
 
-	TraversVisitor traversVisitor(root);
+	DeleteObject *deleteObject = new DeleteObject(root->getObjects()[4]);
+	deleteObject->execute();
+	search->execute();
+	std::cout << search->result.size() << std::endl;
+
+	delete deleteObject;
+	delete search;
+
+	ListDirectory *listDirectory = new ListDirectory(root);
+	listDirectory->execute();
+	listDirectory->print();
+
+	CreateFolder *createFolder = new CreateFolder(root, "lib32");
+	createFolder->execute();
+	delete createFolder;
+
+	listDirectory->execute();
+	listDirectory->print();
+
+	CopyPaste *copyPaste = new CopyPaste(rndObject, root, "pera.txt");
+	copyPaste->execute();
+	delete copyPaste;
+
+	listDirectory->execute();
+	listDirectory->print();
+
+	Move *move = new Move(rndObject, noaccess);
+	move->execute();
+	delete move;
+
+	listDirectory->execute();
+	listDirectory->print();
+
+	delete listDirectory;
+
+	//TraversVisitor traversVisitor(root);
 
 	delete root;
 }

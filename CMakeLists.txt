@@ -29,4 +29,4 @@ add_executable(dz3 main.cpp
                WriteFailedException.cpp
                Filesystem.cpp
                AccessDescriptor.cpp
-               FSVisitor.cpp ProtectedOperation.cpp ProtectedOperation.h ReadFile.cpp ReadFile.h Search.cpp Search.h CreateFile.cpp CreateFile.h)
+               FSVisitor.cpp ProtectedOperation.cpp ProtectedOperation.h ReadFile.cpp ReadFile.h Search.cpp Search.h CreateFile.cpp CreateFile.h DeleteObject.cpp DeleteObject.h CreateFolder.cpp CreateFolder.h CopyPaste.cpp CopyPaste.h ListDirectory.cpp ListDirectory.h Move.cpp Move.h)

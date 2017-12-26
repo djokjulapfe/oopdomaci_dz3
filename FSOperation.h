@@ -7,6 +7,10 @@
 
 class FSOperation {
 public:
+	FSOperation(FSObject *object);
+
+	FSOperation();
+
 	FSObject * object;
 
 	virtual void execute() = 0;
