@@ -26,6 +26,7 @@ public:
 
 	virtual FSObject *copy() = 0;
 
+public:
 	Folder *parent;
 
 	static int counter;

@@ -4,3 +4,7 @@ WriteFailedException::WriteFailedException(const std::string &msg, const FSExcep
 		: OperationFailedException(msg, this) {
 	causedBy = cause;
 }
+
+const char *WriteFailedException::what() const throw() {
+	return "WriteFailedException\n";
+}

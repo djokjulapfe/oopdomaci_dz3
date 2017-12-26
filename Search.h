@@ -4,7 +4,7 @@
 
 #include "FSOperation.h"
 
-class Search : FSOperation {
+class Search : public FSOperation {
 public:
 
 	Search(Folder *root, const std::string &filename);

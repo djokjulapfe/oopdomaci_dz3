@@ -3,7 +3,9 @@
 #include "SearchVisitor.h"
 #include "ReadFile.h"
 #include "Search.h"
+#include "ProtectedOperation.h"
 #include "AccessException.h"
+#include "CreateFile.h"
 
 using byte = unsigned char;
 
@@ -56,65 +58,86 @@ public:
 	}
 };
 
+/**
+ * How to use:
+ * TraversVisitor tv(root);
+ * where root is of type Folder *
+ *
+ * When the program is run you can give it 3 comands:
+ * k - index of the object you want to move to
+ * .. - move to the parent of the current folder
+ * q/. - exit the visitor
+ */
+
+class TraversVisitor : public FSVisitor {
+public:
+	explicit TraversVisitor(Folder *currLocation) : currLocation(currLocation) {
+		currLocation->accept(*this);
+		int k = 0;
+		while (k != -2) {
+			std::string in;
+			std::cin >> in;
+
+			if (in == "echo") {
+				std::cin >> in;
+				std::cout << in << std::endl;
+			} if (in == "touch") {
+				std::cin >> in; //folder name
+				currLocation->add(new File(in));
+			} else if (in == "mkdir") {
+				std::cin >> in; //folder name
+				currLocation->add(new Folder(in));
+			} else if (in == "q" || in == ".") {
+				k = -2;
+			} else if (in == "..") {
+				k = -1;
+				this->move(k);
+			} else {
+				k = std::atoi(in.c_str());
+				this->move(k);
+			}
+		}
+	}
+
+	void visitFile(File &f) override {
+		std::cout << "File: " << f.getName() << ": ";
+		printArray(f.read());
+	}
+
+	void visitFolder(Folder &f) override {
+
+		int i = 0;
+		for (auto &&item :f.getObjects()) {
+			std::cout << i++ << " " << item->getName() << std::endl;
+		}
+	}
+
+	void move(const int &k) {
+		if (k == -1) {
+			if (currLocation->parent == nullptr) {
+				std::cout << "You are in /!\n";
+			} else {
+				currLocation = currLocation->parent;
+			}
+		} else {
+			if (k >= currLocation->getObjects().size()) {
+				std::cout << "There are not that many objects in this directory!\n";
+			} else if (dynamic_cast<Folder *>(currLocation->getObjects()[k]) != nullptr) {
+				currLocation = (Folder *) currLocation->getObjects()[k];
+			} else {
+				File * f = (File *) currLocation->getObjects()[k];
+				std::cout << "File: " << f->getName() << ": ";
+				printArray(f->read());
+			}
+		}
+		currLocation->accept(*this);
+	}
+
+private:
+	Folder *currLocation;
+};
+
 void test1() {
-
-	// FSObject
-
-	File X("X"), Y("Y"), Z("Z");
-
-	X.write(std::vector<byte>{1, 2, 3, 4});
-	X.write(std::vector<byte>{1, 2, 3, 4});
-	X.write(std::vector<byte>{1, 2, 3, 4});
-
-	Y.write(std::vector<byte>{4, 3, 2, 1});
-	Y.write(std::vector<byte>{4, 3, 2, 1});
-	Y.write(std::vector<byte>{4, 3, 2, 1});
-
-	Z.write(std::vector<byte>{1, 1, 1, 1});
-	Z.write(std::vector<byte>{1, 1, 1, 1});
-	Z.write(std::vector<byte>{1, 1, 1, 1});
-
-	Folder A("A");
-	Folder B("Z");
-	Folder C("C");
-
-	A.add(&X);
-	A.add(&B);
-
-	B.add(&Y);
-	B.add(&C);
-
-	C.add(&Z);
-
-	FSVisitor *printVisitor = new PrintVisitor();
-	A.accept(*printVisitor);
-	delete printVisitor;
-
-	// AccessDescriptor
-	X.accessDescriptor->add("ReadFile");
-	Y.accessDescriptor->add("ReadFile");
-	Z.accessDescriptor->add("ReadFile");
-
-	A.accessDescriptor->add("ReadFile");
-	B.accessDescriptor->add("ReadFile");
-	C.accessDescriptor->add("ReadFile");
-
-	// SearchVisitor
-
-	SearchVisitor *searchVisitor = new SearchVisitor("Z");
-	A.accept(*searchVisitor);
-	std::cout << searchVisitor->foundObjects.size() << std::endl;
-
-	B.accessDescriptor->remove("ReadFile");
-
-	searchVisitor->foundObjects.clear();
-	A.accept(*searchVisitor);
-	std::cout << searchVisitor->foundObjects.size() << std::endl;
-
-	delete searchVisitor;
-}
-
-void test2() {
 	Folder *root = new Folder("/");
 	Folder *noaccess;
 	root->getAccessDescriptor()->add("ReadFile");
@@ -225,67 +248,83 @@ void test2() {
 	// Read File
 
 	auto *readFile = new ReadFile(*(File *) searchVisitor->foundObjects[0]);
-	try {
-		readFile->execute();
-		printArray(readFile->data);
-	} catch (AccessException &e) {
-		std::cout << e.what();
-	}
+	readFile->execute();
+	printArray(readFile->data);
 	delete readFile;
 
 	readFile = new ReadFile(*(File *) searchVisitor->foundObjects[1]);
-	try {
-		readFile->execute();
-		printArray(readFile->data);
-	} catch (AccessException &e) {
-		std::cout << e.what();
-	}
+	readFile->execute();
+	printArray(readFile->data);
 	delete readFile;
 
 	readFile = new ReadFile(*(File *) searchVisitor->foundObjects[2]);
 
-	try {
-		readFile->execute();
-		printArray(readFile->data);
-		((File *) searchVisitor->foundObjects[2])->write(std::vector<byte>{1, 2, 3});
-	} catch (AccessException &e) {
-		std::cout << e.what();
-	}
+	readFile->execute();
+	printArray(readFile->data);
+	((File *) searchVisitor->foundObjects[2])->write(std::vector<byte>{1, 2, 3});
 
-	try {
-		readFile->execute();
-		printArray(readFile->data);
-	} catch (AccessException &e) {
-		std::cout << e.what();
-	}
+
+	readFile->execute();
+	printArray(readFile->data);
+	delete readFile;
+
+	readFile = new ReadFile(*(File *) noaccess->getObjects()[1]);
+	readFile->execute();
+	printArray(readFile->data);
+
 	delete readFile;
 
 	auto *search = new Search(root, "pera.txt");
-	try {
-		search->execute();
-		std::cout << search->result.size() << std::endl;
-	} catch (AccessException &e) {
-		std::cout << e.what();
-	}
+	search->execute();
+	std::cout << search->result.size() << std::endl;
 	delete search;
 
 	search = new Search(noaccess, "pera.txt");
+	search->execute();
+	std::cout << search->result.size() << std::endl;
+	delete search;
+	search = new Search(noaccess, "pera.txt");
+
+	auto *protectedOperation = new ProtectedOperation(search);
 	try {
-		search->execute();
+		protectedOperation->execute();
 		std::cout << search->result.size() << std::endl;
 	} catch (AccessException &e) {
 		std::cout << e.what();
 	}
+	delete protectedOperation;
 	delete search;
 
+	search = new Search(root, "pera.txt");
+	protectedOperation = new ProtectedOperation(search);
+	try {
+		protectedOperation->execute();
+		std::cout << search->result.size() << std::endl;
+	} catch (AccessException &e) {
+		std::cout << e.what();
+	}
+	delete protectedOperation;
+	delete search;
+
+	auto *createFile = new CreateFile(root, "pera.txt");
+
+	search = new Search(root, "pera.txt");
+	search->execute();
+	std::cout << search->result.size() << std::endl;
+	createFile->execute();
+	search->execute();
+	std::cout << search->result.size() << std::endl;
+
+	delete createFile;
+	delete search;
 	delete searchVisitor;
+
+	TraversVisitor traversVisitor(root);
+
 	delete root;
 }
 
-// FSVisitor
-
 int main() {
-	//test1();
-	test2();
+	test1();
 	return 0;
 }

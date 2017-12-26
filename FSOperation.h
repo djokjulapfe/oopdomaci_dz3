@@ -7,7 +7,7 @@
 
 class FSOperation {
 public:
-	std::vector<FSObject *> objects;
+	FSObject * object;
 
 	virtual void execute() = 0;
 

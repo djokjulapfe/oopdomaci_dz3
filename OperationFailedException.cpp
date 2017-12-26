@@ -4,3 +4,7 @@ OperationFailedException::OperationFailedException(const std::string &msg, const
 		: FSException(msg, this) {
 	causedBy = cause;
 }
+
+const char *OperationFailedException::what() const throw() {
+	return "OperationFailedException\n";
+}

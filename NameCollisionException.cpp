@@ -4,3 +4,7 @@ NameCollisionException::NameCollisionException(const std::string &msg, const FSE
 		: OperationFailedException(msg, this) {
 	causedBy = cause;
 }
+
+const char *NameCollisionException::what() const throw() {
+	return "NameCollisionException\n";
+}

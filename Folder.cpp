@@ -22,11 +22,13 @@ FSObject *Folder::copy() {
 }
 
 void Folder::add(FSObject *o) {
+	o->parent = this;
 	containedObjects.push_back(o);
 }
 
 void Folder::remove(FSObject *o) {
 	containedObjects.erase(std::remove(containedObjects.begin(), containedObjects.end(), o), containedObjects.end());
+	delete o;
 }
 
 Folder::Folder(const std::string &name) : FSObject(name) {

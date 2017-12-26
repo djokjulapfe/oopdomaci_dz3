@@ -5,7 +5,7 @@
 #include "FSOperation.h"
 #include "File.h"
 
-class ReadFile : FSOperation {
+class ReadFile : public FSOperation {
 public:
 	explicit ReadFile(File &f);
 

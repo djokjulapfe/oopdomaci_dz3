@@ -1,8 +1,12 @@
 #include "ProtectedOperation.h"
+#include "FSException.h"
+#include "AccessException.h"
 
 void ProtectedOperation::execute() {
 	if (checkPrecondition()) {
 		wrappedOperation->execute();
+	} else {
+		throw AccessException(opName, nullptr);
 	}
 }
 
@@ -10,16 +14,5 @@ ProtectedOperation::ProtectedOperation(FSOperation *wrappedOperation) : wrappedO
 }
 
 bool ProtectedOperation::checkPrecondition() {
-	for (auto &&item : wrappedOperation->objects) {
-		auto acc = item->getAccessDescriptor();
-		bool hasAccess = false;
-		for (auto &&operation : acc->getAllowedOperations()) {
-			if (operation == wrappedOperation->getName()) {
-				hasAccess = true;
-				break;
-			}
-		}
-		if (!hasAccess) return false;
-	}
-	return true;
+	return wrappedOperation->object->getAccessDescriptor()->checkAccess(opName);
 }
