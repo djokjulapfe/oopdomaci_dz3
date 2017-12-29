@@ -17,13 +17,11 @@ class Filesystem {
 public:
 
 	static Filesystem &Instance() {
-		static Filesystem instance(1000000);
+		static Filesystem instance(1000);
 		return instance;
 	}
 
 	Filesystem() = delete;
-
-	explicit Filesystem(unsigned int capacity);
 
 	Filesystem(const Filesystem &) = delete;
 
@@ -53,10 +51,15 @@ public:
 
 	void deleteObject(FSObject *objToDelete);
 
+	Folder *getRoot() const;
 
 	long freeSpace();
 
+	static std::vector<std::string> split(std::string s);
+
 private:
+
+	explicit Filesystem(unsigned capacity);
 
 	unsigned capacity;
 

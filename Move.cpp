@@ -6,4 +6,5 @@ void Move::execute() {
 }
 
 Move::Move(FSObject *object, Folder *dest) : FSOperation(object), dest(dest) {
+	opName = "Move";
 }

@@ -9,13 +9,22 @@ void AccessDescriptor::add(std::string operationName) {
 }
 
 void AccessDescriptor::remove(std::string operationName) {
-	allowedOperations.erase(std::remove(allowedOperations.begin(), allowedOperations.end(), operationName), allowedOperations.end());
+	allowedOperations.erase(std::remove(allowedOperations.begin(), allowedOperations.end(), operationName),
+							allowedOperations.end());
 }
 
 bool AccessDescriptor::checkAccess(std::string operationName) {
 	return std::find(allowedOperations.begin(), allowedOperations.end(), operationName) != allowedOperations.end();
 }
 
-AccessDescriptor::AccessDescriptor() : allowedOperations({"ReadFile", "WriteFile", "ListDirectory"}){}
+AccessDescriptor::AccessDescriptor() : allowedOperations({"ReadFile",
+														  "WriteFile",
+														  "ListDirectory",
+														  "CreateFolder",
+														  "DeleteObject",
+														  "CreateFile",
+														  "CopyPaste",
+														  "Search"}) {
+}
 
 

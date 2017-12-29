@@ -8,12 +8,11 @@
 
 class CreateFile : public FSOperation{
 public:
-	CreateFile(Folder *parent, const std::string &filename);
+	CreateFile(FSObject *object, const std::string &filename);
 
 	void execute() override;
 
 private:
-	Folder *parent;
 	std::string filename;
 };
 

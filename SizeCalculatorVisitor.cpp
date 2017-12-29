@@ -13,3 +13,6 @@ void SizeCalculatorVisitor::visitFolder(Folder &f) {
 unsigned int SizeCalculatorVisitor::getSize() const {
 	return size;
 }
+
+SizeCalculatorVisitor::SizeCalculatorVisitor() : size(0) {
+}

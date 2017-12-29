@@ -7,14 +7,13 @@
 
 class ReadFile : public FSOperation {
 public:
-	explicit ReadFile(File *f);
+	ReadFile(FSObject *object);
 
 	void execute() override;
 
 	std::vector<byte> data;
 
 private:
-	File *f;
 };
 
 

@@ -7,6 +7,7 @@ void CopyPaste::execute() {
 CopyPaste::CopyPaste(FSObject *object, Folder *destFolder, const std::string &newName) : FSOperation(object),
 																						 destFolder(destFolder),
 																						 newName(newName) {
+	opName = "CreateFile";
 }
 
 

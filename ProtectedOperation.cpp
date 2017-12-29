@@ -6,13 +6,15 @@ void ProtectedOperation::execute() {
 	if (checkPrecondition()) {
 		wrappedOperation->execute();
 	} else {
-		throw AccessException(opName, nullptr);
+		throw AccessException(wrappedOperation->opName, nullptr);
 	}
 }
 
-ProtectedOperation::ProtectedOperation(FSOperation *wrappedOperation) : wrappedOperation(wrappedOperation) {
+ProtectedOperation::ProtectedOperation(FSOperation *fsOperation) {
+	wrappedOperation = fsOperation;
+	opName = "ProtectedOperation";
 }
 
 bool ProtectedOperation::checkPrecondition() {
-	return wrappedOperation->object->getAccessDescriptor()->checkAccess(opName);
+	return wrappedOperation->object->getAccessDescriptor()->checkAccess(wrappedOperation->opName);
 }

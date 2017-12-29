@@ -7,7 +7,7 @@
 
 class ProtectedOperation : public FSOperation {
 public:
-	ProtectedOperation(FSOperation *wrappedOperation);
+	ProtectedOperation(FSOperation *fsOperation);
 
 	void execute() override;
 

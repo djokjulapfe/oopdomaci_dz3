@@ -2,11 +2,12 @@
 #include "NameCollisionException.h"
 
 void CreateFile::execute() {
-	for (auto &&item : parent->containedObjects) {
+	for (auto &&item : ((Folder *) object)->containedObjects) {
 		if (item->getName() == filename) throw NameCollisionException("There exist a file with that name", nullptr);
 	}
-	parent->add(new File(filename));
+	((Folder *) object)->add(new File(filename));
 }
 
-CreateFile::CreateFile(Folder *parent, const std::string &filename) : parent(parent), filename(filename) {
+CreateFile::CreateFile(FSObject *object, const std::string &filename) : FSOperation(object), filename(filename) {
+	opName = "CreateFile";
 }

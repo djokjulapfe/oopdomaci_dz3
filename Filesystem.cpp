@@ -8,7 +8,8 @@
 #include "DeleteObject.h"
 #include "SizeCalculatorVisitor.h"
 
-Filesystem::Filesystem(unsigned int capacity) : capacity(capacity) {
+Filesystem::Filesystem(unsigned capacity) : capacity(capacity) {
+	root = new Folder("/");
 }
 
 void Filesystem::createFile(std::string fName, Folder *parentFolder) {
@@ -156,4 +157,22 @@ long Filesystem::freeSpace() {
 	SizeCalculatorVisitor sizeCalculatorVisitor;
 	root->accept(sizeCalculatorVisitor);
 	return capacity - sizeCalculatorVisitor.getSize();
+}
+
+Folder *Filesystem::getRoot() const {
+	return root;
+}
+
+std::vector<std::string> Filesystem::split(std::string s) {
+	if (s[s.length() - 1] == '/') s.erase(s.length()-1, 1);
+	std::vector<std::string> ret;
+	std::string delimiter = "/";
+	std::string token;
+	size_t pos = 0;
+	while ((pos = s.find(delimiter)) != std::string::npos) {
+		token = s.substr(0, pos);
+		ret.push_back(token);
+		s.erase(0, pos + delimiter.length());
+	}
+	return ret;
 }

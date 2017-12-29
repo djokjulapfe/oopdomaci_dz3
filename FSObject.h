@@ -26,6 +26,8 @@ public:
 
 	virtual FSObject *copy() = 0;
 
+	// TODO: add virtual bool isFolder() = 0;
+
 public:
 	Folder *parent;
 

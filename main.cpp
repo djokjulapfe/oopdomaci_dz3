@@ -1,16 +1,10 @@
 #include <iostream>
 #include "Filesystem.h"
 #include "SearchVisitor.h"
-#include "ReadFile.h"
-#include "Search.h"
-#include "ProtectedOperation.h"
 #include "AccessException.h"
-#include "CreateFile.h"
 #include "DeleteObject.h"
-#include "CreateFolder.h"
 #include "CopyPaste.h"
 #include "ListDirectory.h"
-#include "Move.h"
 
 using byte = unsigned char;
 
@@ -366,12 +360,250 @@ void test1() {
 	delete root;
 }
 
-void test2() {
 
+std::string fullPath(FSObject *curr) {
+	std::string ret;
+	FSObject *it = curr;
+	if (curr->getName() == "/") {
+		return "/";
+	}
+	while (it->parent != nullptr) {
+		ret.insert(0, it->getName());
+		ret.insert(0, "/");
+		it = it->parent;
+	}
+	return ret;
+}
+
+class Traverser {
+public:
+	explicit Traverser(Folder *curr) : curr(curr) {
+	}
+
+	void ls() {
+		auto list = Filesystem::Instance().listFolder(curr);
+		if (curr->parent != nullptr) {
+			std::cout << "..\n";
+		}
+		for (auto &&item : list) {
+			// TODO: add '/' if it is a folder
+			std::cout << item->getName() << std::endl;
+		}
+	}
+
+	void cd(std::string name) {
+		if (name == "..") {
+			if (curr->parent != nullptr) {
+				curr = curr->parent;
+			} else {
+				std::cout << "You are in root!";
+			}
+			return;
+		}
+		for (auto &&item : curr->getObjects()) {
+			// TODO: Check if folder
+			if (item->getName() == name) {
+				curr = (Folder *) item;
+				return;
+			}
+		}
+		std::cout << "No folder with the name: " << name << std::endl;
+	}
+
+	void mkdir(std::string name) {
+		Filesystem::Instance().createFolder(name, curr);
+	}
+
+	void rm(std::string name) {
+		for (auto &&item : curr->getObjects()) {
+			if (item->getName() == name) {
+				Filesystem::Instance().deleteObject(item);
+			}
+		}
+	}
+
+	void touch(std::string name) {
+		Filesystem::Instance().createFile(name, curr);
+	}
+
+	void echo(std::string name, std::vector<byte> data) {
+		for (auto &&item : curr->getObjects()) {
+			// TODO: check if !isFolder()
+			if (item->getName() == name) {
+				Filesystem::Instance().writeFile((File *) item, data);
+				return;
+			}
+		}
+		std::cout << "No such file\n";
+	}
+
+	void cat(std::string name) {
+		for (auto &&item : curr->getObjects()) {
+			// TODO: check if !isFolder()
+			if (item->getName() == name) {
+				auto data = Filesystem::Instance().readFlie((File *) item);
+				for (auto &&datum : data) {
+					std::cout << datum;
+				}
+				std::cout << std::endl;
+				return;
+			}
+		}
+		std::cout << "No such file\n";
+	}
+
+	void bytes(std::string name) {
+		for (auto &&item : curr->getObjects()) {
+			// TODO: check if !isFolder()
+			if (item->getName() == name) {
+				auto data = Filesystem::Instance().readFlie((File *) item);
+				for (auto &&datum : data) {
+					std::cout << (int) datum << " ";
+				}
+				std::cout << std::endl;
+				return;
+			}
+		}
+		std::cout << "No such file\n";
+	}
+
+	void chmod(std::string filename, std::string opName, bool add) {
+		for (auto &&item : curr->getObjects()) {
+			if (item->getName() == filename) {
+				if (add) {
+					Filesystem::Instance().grantAccess(item, opName);
+				} else {
+					Filesystem::Instance().revokeAccess(item, opName);
+				}
+				return;
+			}
+		}
+		std::cout << "No such file or directory";
+	}
+
+	void find(std::string name) {
+		for (auto &&item : Filesystem::Instance().search(name)) {
+			std::cout << fullPath(item) << std::endl;
+		}
+	}
+
+	Folder *getItem(std::string dest) {
+		auto d = Filesystem::split(dest);
+		Folder *it = curr;
+		while (d.size() > 0) {
+			for (auto &&item : it->getObjects()) {
+				// TODO: check if isFolder()
+				if (item->getName() == d[0]) {
+					it = (Folder *) item;
+					break;
+				}
+			}
+			d.erase(d.begin());
+		}
+		return it;
+	}
+
+	void cp(std::string src, std::string dest) {
+		std::cout << fullPath(getItem(src)) << std::endl;
+		std::cout << fullPath(getItem(dest)) << std::endl;
+	}
+
+	int doCommand() {
+		std::string c;
+		std::cout << "user@dz3:" << fullPath(curr) << "$ ";
+		std::cin >> c;
+		if (c == "ls") {
+			ls();
+		} else if (c == "cd") {
+			std::cin >> c;
+			cd(c);
+		} else if (c == "mkdir") {
+			std::cin >> c;
+			mkdir(c);
+		} else if (c == "rm") {
+			std::cin >> c;
+			rm(c);
+		} else if (c == "exit") {
+			return -1;
+		} else if (c == "touch") {
+			std::cin >> c;
+			touch(c);
+		} else if (c == "echo") {
+			std::string name;
+			std::cin >> name;
+			std::vector<byte> b;
+			int n;
+			std::cin >> n;
+			for (int i = 0; i < n; ++i) {
+				byte byte1;
+				std::cin >> byte1;
+				b.push_back(byte1);
+			}
+			echo(name, b);
+		} else if (c == "cat") {
+			std::cin >> c;
+			cat(c);
+		} else if (c == "bytes") {
+			std::cin >> c;
+			bytes(c);
+		} else if (c == "chmod") {
+			std::string name;
+			std::cin >> name;
+			std::cin >> c;
+			bool add = c[0] == '+';
+			c.erase(c.begin(), c.begin() + 1);
+			chmod(name, c, add);
+		} else if (c == "find") {
+			std::cin >> c;
+			find(c);
+		} else if (c == "cp") {
+			std::string src, dst;
+			std::cin >> src;
+			std::cin >> dst;
+			cp(src, dst);
+		} else {
+			std::cout << "There is no command " << c << std::endl;
+		}
+		return 0;
+	}
+
+	Folder *curr;
+};
+
+void test2() {
+	std::cout << Filesystem::Instance().freeSpace() << std::endl;
+	Traverser traverser(Filesystem::Instance().getRoot());
+	traverser.mkdir("home");
+	traverser.mkdir("lib");
+	traverser.mkdir("tmp");
+	traverser.cd("home");
+//	traverser.mkdir("user");
+//	traverser.cd("user");
+//	traverser.mkdir("Documents");
+//	traverser.cd("Documents");
+//	traverser.touch("pera.txt");
+//	traverser.cd("..");
+//	traverser.mkdir("Downloads");
+//	traverser.cd("Downloads");
+//	traverser.touch("pera.txt");
+//	traverser.cd("..");
+//	traverser.mkdir("Pictures");
+//	traverser.mkdir("Music");
+//	traverser.touch("numbers.txt");
+//	traverser.echo("numbers.txt", {1, 2, 3});
+//	traverser.touch("text.txt");
+//	traverser.echo("text.txt", {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!'});
+//	traverser.chmod("text.txt", "ReadFile", false);
+//	traverser.touch("pera.txt");
+//	traverser.cp("rndstr", "Documents/test.txt");
+
+	while (traverser.doCommand() == 0);
 }
 
 int main() {
+	std::cout << "\n--------Running test1----------\n\n";
 	test1();
+	std::cout << "\n--------Running test2----------\n\n";
 	test2();
 	return 0;
 }

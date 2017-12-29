@@ -17,4 +17,5 @@ void ListDirectory::print() {
 }
 
 ListDirectory::ListDirectory(FSObject *object) : FSOperation(object) {
+	opName = "ListDirectory";
 }

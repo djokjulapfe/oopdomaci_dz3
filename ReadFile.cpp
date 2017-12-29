@@ -1,9 +1,9 @@
 #include "ReadFile.h"
 
 void ReadFile::execute() {
-	data = f->read();
+	data = ((File *) object)->read();
 }
 
-ReadFile::ReadFile(File *f) : f(f) {
+ReadFile::ReadFile(FSObject *object) : FSOperation(object) {
 	opName = "ReadFile";
 }

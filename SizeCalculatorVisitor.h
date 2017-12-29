@@ -8,6 +8,8 @@
 
 class SizeCalculatorVisitor : public FSVisitor {
 public:
+	SizeCalculatorVisitor();
+
 	void visitFile(File &f) override;
 
 	void visitFolder(Folder &f) override;

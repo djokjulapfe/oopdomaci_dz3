@@ -8,4 +8,5 @@ CreateFolder::CreateFolder(FSObject *object, const std::string &foldername) : FS
 																			  foldername(foldername) {
 	// TODO: check if object is File *
 	parent = (Folder *) object;
+	opName = "CreateFolder";
 }

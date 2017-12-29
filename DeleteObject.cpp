@@ -6,4 +6,5 @@ void DeleteObject::execute() {
 }
 
 DeleteObject::DeleteObject(FSObject *object) : FSOperation(object) {
+	opName = "DeleteObject";
 }

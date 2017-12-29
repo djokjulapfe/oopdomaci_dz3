@@ -17,7 +17,6 @@ public:
 
 	const std::string &getName() const;
 
-protected:
 	std::string opName;
 };
 
