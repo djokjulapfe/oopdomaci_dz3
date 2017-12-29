@@ -13,6 +13,7 @@ AccessDescriptor *FSObject::getAccessDescriptor() const {
 
 FSObject::FSObject(const std::string &name) : name(name) {
 	accessDescriptor = new AccessDescriptor();
+	parent = nullptr;
 }
 
 FSObject::FSObject() {
@@ -20,8 +21,13 @@ FSObject::FSObject() {
 	name = "unnamedObject_";
 	name.append(std::to_string(FSObject::counter));
 	FSObject::counter++;
+	parent = nullptr;
 }
 
 FSObject::~FSObject() {
 	delete accessDescriptor;
+}
+
+void FSObject::setName(const std::string &name) {
+	FSObject::name = name;
 }

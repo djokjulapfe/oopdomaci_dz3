@@ -26,6 +26,8 @@ public:
 
 	virtual FSObject *copy() = 0;
 
+	void setName(const std::string &name);
+
 	// TODO: add virtual bool isFolder() = 0;
 
 public:

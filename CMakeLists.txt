@@ -52,4 +52,4 @@ add_executable(dz3 main.cpp
                WriteFile.cpp
                WriteFile.h
                SizeCalculatorVisitor.cpp
-               SizeCalculatorVisitor.h)
+               SizeCalculatorVisitor.h AccessVisitor.cpp AccessVisitor.h)

@@ -17,10 +17,12 @@ long Folder::size() {
 }
 
 FSObject *Folder::copy() {
-	Folder *newFolder = new Folder(name);
+	auto *newFolder = new Folder(name);
 	for (auto &&item : containedObjects) {
 		newFolder->add(item->copy());
 	}
+	delete newFolder->accessDescriptor;
+	newFolder->accessDescriptor = accessDescriptor->copy();
 	return newFolder;
 }
 

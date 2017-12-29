@@ -7,8 +7,10 @@
 #include "CopyPaste.h"
 #include "DeleteObject.h"
 #include "SizeCalculatorVisitor.h"
+#include "AccessVisitor.h"
 
-Filesystem::Filesystem(unsigned capacity) : capacity(capacity) {
+Filesystem::Filesystem(unsigned capacity) {
+	Filesystem::capacity = capacity;
 	root = new Folder("/");
 }
 
@@ -144,10 +146,17 @@ void Filesystem::move(FSObject *objToMove, Folder *destFolder) {
 }
 
 void Filesystem::deleteObject(FSObject *objToDelete) {
+	// TODO: check access
+	AccessVisitor accessVisitor("DeleteObject");
+	objToDelete->accept(accessVisitor);
 	DeleteObject deleteObject(objToDelete);
 	ProtectedOperation po(&deleteObject);
 	try {
-		po.execute();
+		if (accessVisitor.isAccessible()) {
+			po.execute();
+		} else {
+			throw AccessException("Some files might be -DeleteObject", nullptr);
+		}
 	} catch (AccessException &e) {
 		throw AccessException("No access", &e);
 	}
@@ -164,7 +173,8 @@ Folder *Filesystem::getRoot() const {
 }
 
 std::vector<std::string> Filesystem::split(std::string s) {
-	if (s[s.length() - 1] == '/') s.erase(s.length()-1, 1);
+	if (s[s.length() - 1] != '/') s.append("/");
+	//if (s[s.length() - 1] == '/') s.erase(s.length()-1, 1);
 	std::vector<std::string> ret;
 	std::string delimiter = "/";
 	std::string token;

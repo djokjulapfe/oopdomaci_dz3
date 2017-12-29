@@ -24,7 +24,17 @@ AccessDescriptor::AccessDescriptor() : allowedOperations({"ReadFile",
 														  "DeleteObject",
 														  "CreateFile",
 														  "CopyPaste",
-														  "Search"}) {
+														  "Search",
+														  "Move"}) {
+}
+
+AccessDescriptor *AccessDescriptor::copy() {
+	auto newDesc = new AccessDescriptor();
+	newDesc->allowedOperations.clear();
+	for (auto item : allowedOperations) {
+		newDesc->allowedOperations.push_back(item);
+	}
+	return newDesc;
 }
 
 

@@ -17,6 +17,8 @@ public:
 
 	const std::vector<std::string> &getAllowedOperations() const;
 
+	AccessDescriptor *copy();
+
 private:
 	std::vector<std::string> allowedOperations;
 };

@@ -487,14 +487,15 @@ public:
 		}
 	}
 
-	Folder *getItem(std::string dest) {
+	FSObject *getItem(std::string dest) {
 		auto d = Filesystem::split(dest);
-		Folder *it = curr;
+		FSObject *it = curr;
 		while (d.size() > 0) {
-			for (auto &&item : it->getObjects()) {
+			// TODO: when you give it a/b/c it will find a/c if b doesn't exist Fix this!
+			for (auto &&item : ((Folder *) it)->getObjects()) {
 				// TODO: check if isFolder()
 				if (item->getName() == d[0]) {
-					it = (Folder *) item;
+					it = item;
 					break;
 				}
 			}
@@ -504,8 +505,19 @@ public:
 	}
 
 	void cp(std::string src, std::string dest) {
-		std::cout << fullPath(getItem(src)) << std::endl;
-		std::cout << fullPath(getItem(dest)) << std::endl;
+		// TODO: check existance
+		auto s = getItem(src);;
+		// TODO: check if folder
+		Folder *d = (Folder *) getItem(dest);
+		Filesystem::Instance().copyPaste(s, d, Filesystem::split(dest).back());
+	}
+
+	void move(std::string src, std::string dest) {
+		// TODO: check existance
+		auto s = getItem(src);
+		// TODO: check if folder
+		Folder *d = (Folder *) getItem(dest);
+		Filesystem::Instance().move(s, d);
 	}
 
 	int doCommand() {
@@ -535,7 +547,7 @@ public:
 			int n;
 			std::cin >> n;
 			for (int i = 0; i < n; ++i) {
-				byte byte1;
+				int byte1;
 				std::cin >> byte1;
 				b.push_back(byte1);
 			}
@@ -577,25 +589,28 @@ void test2() {
 	traverser.mkdir("lib");
 	traverser.mkdir("tmp");
 	traverser.cd("home");
-//	traverser.mkdir("user");
-//	traverser.cd("user");
-//	traverser.mkdir("Documents");
-//	traverser.cd("Documents");
-//	traverser.touch("pera.txt");
-//	traverser.cd("..");
-//	traverser.mkdir("Downloads");
-//	traverser.cd("Downloads");
-//	traverser.touch("pera.txt");
-//	traverser.cd("..");
-//	traverser.mkdir("Pictures");
-//	traverser.mkdir("Music");
-//	traverser.touch("numbers.txt");
-//	traverser.echo("numbers.txt", {1, 2, 3});
-//	traverser.touch("text.txt");
-//	traverser.echo("text.txt", {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!'});
-//	traverser.chmod("text.txt", "ReadFile", false);
-//	traverser.touch("pera.txt");
-//	traverser.cp("rndstr", "Documents/test.txt");
+	traverser.mkdir("user");
+	traverser.cd("user");
+	traverser.mkdir("Documents");
+	traverser.cd("Documents");
+	traverser.touch("pera.txt");
+	traverser.cd("..");
+	traverser.mkdir("Downloads");
+	traverser.cd("Downloads");
+	traverser.touch("pera.txt");
+	traverser.cd("..");
+	traverser.mkdir("Pictures");
+	traverser.mkdir("Music");
+	traverser.touch("numbers.txt");
+	traverser.echo("numbers.txt", {1, 2, 3});
+	traverser.touch("text.txt");
+	traverser.echo("text.txt", {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!'});
+	traverser.chmod("text.txt", "ReadFile", false);
+	traverser.touch("pera.txt");
+	traverser.cp("text.txt", "Documents/test(copy).txt");
+	traverser.move("Documents/pera.txt", "Music");
+	traverser.rm("text.txt");
+	
 
 	while (traverser.doCommand() == 0);
 }

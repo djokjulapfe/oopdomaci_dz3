@@ -11,6 +11,8 @@ long File::size() {
 FSObject *File::copy() {
 	auto *newFile = new File(name);
 	newFile->write(this->data);
+	delete newFile->accessDescriptor;
+	newFile->accessDescriptor = accessDescriptor->copy();
 	return newFile;
 }
 
