@@ -48,3 +48,7 @@ Folder::~Folder() {
 		delete item;
 	}
 }
+
+bool Folder::isFolder() {
+	return true;
+}

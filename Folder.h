@@ -29,6 +29,8 @@ public:
 
 	void remove(FSObject *o);
 
+	bool isFolder() override;
+
 	std::vector<FSObject *> containedObjects;
 };
 

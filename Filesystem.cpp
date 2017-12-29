@@ -49,7 +49,7 @@ std::vector<FSObject *> Filesystem::listFolder(Folder *f) {
 	}
 }
 
-std::vector<byte> Filesystem::readFlie(File *file) {
+std::vector<byte> Filesystem::readFile(File *file) {
 	ReadFile readFile(file);
 	ProtectedOperation po(&readFile);
 	try {
@@ -84,14 +84,13 @@ void Filesystem::revokeAccess(FSObject *fObj, std::string opName) {
 }
 
 Folder *Filesystem::openFolder(std::string folderPath) {
-	// TODO: implement getDirVector
-	std::vector<std::string> dirs; // = getDirVector(filePath);
+	std::vector<std::string> dirs = split(folderPath);
 	Folder *it = root;
 	for (const auto &dir : dirs) {
 		auto itobj = it->getObjects();
 		it = nullptr;
 		for (auto &&item : itobj) {
-			if (item->getName() == dir && dynamic_cast<Folder*>(item) != nullptr) {
+			if (item->getName() == dir && item->isFolder()) {
 				it = (Folder *) item;
 				break;
 			}
@@ -116,7 +115,13 @@ void Filesystem::copyPaste(FSObject *objToCopy, Folder *destFolder, std::string 
 	CopyPaste copyPaste(objToCopy, destFolder, newName);
 	ProtectedOperation po(&copyPaste);
 	try {
-		// TODO: check for size
+		auto *sizeCalculatorVisitor = new SizeCalculatorVisitor();
+		objToCopy->accept(*sizeCalculatorVisitor);
+		auto tsize = sizeCalculatorVisitor->getSize();
+		delete sizeCalculatorVisitor;
+		if (freeSpace() - tsize < 0) {
+			throw WriteFailedException("Not enough space", nullptr);
+		}
 		for (auto &&item : destFolder->getObjects()) {
 			if (item->getName() == newName) throw NameCollisionException("Same name", nullptr);
 		}
@@ -146,7 +151,6 @@ void Filesystem::move(FSObject *objToMove, Folder *destFolder) {
 }
 
 void Filesystem::deleteObject(FSObject *objToDelete) {
-	// TODO: check access
 	AccessVisitor accessVisitor("DeleteObject");
 	objToDelete->accept(accessVisitor);
 	DeleteObject deleteObject(objToDelete);

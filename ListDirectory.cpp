@@ -1,7 +1,7 @@
 #include "ListDirectory.h"
+#include "FSException.h"
 
 void ListDirectory::execute() {
-	// TODO: check if object is Folder
 	objs.clear();
 	auto *dir = (Folder *) object;
 	for (auto &&item : dir->getObjects()) {
@@ -17,5 +17,9 @@ void ListDirectory::print() {
 }
 
 ListDirectory::ListDirectory(FSObject *object) : FSOperation(object) {
-	opName = "ListDirectory";
+	if (object->isFolder()) {
+		opName = "ListDirectory";
+	} else {
+		throw FSException("Object is not a folder", nullptr);
+	}
 }

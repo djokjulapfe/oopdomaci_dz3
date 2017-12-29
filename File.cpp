@@ -33,3 +33,7 @@ File::File(const std::string &name) : FSObject(name) {
 File::File() : FSObject() {
 
 }
+
+bool File::isFolder() {
+	return false;
+}

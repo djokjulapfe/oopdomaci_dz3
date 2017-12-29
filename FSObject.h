@@ -28,7 +28,7 @@ public:
 
 	void setName(const std::string &name);
 
-	// TODO: add virtual bool isFolder() = 0;
+	virtual bool isFolder() = 0;
 
 public:
 	Folder *parent;

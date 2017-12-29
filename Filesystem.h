@@ -33,7 +33,7 @@ public:
 
 	std::vector<FSObject *> listFolder(Folder *f);
 
-	std::vector<byte> readFlie(File *file);
+	std::vector<byte> readFile(File *file);
 
 	void writeFile(File * file, std::vector<byte> content);
 

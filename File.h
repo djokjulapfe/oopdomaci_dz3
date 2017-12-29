@@ -24,6 +24,8 @@ public:
 
 	std::vector<byte> &read();
 
+	bool isFolder() override;
+
 private:
 	std::vector<byte> data;
 };

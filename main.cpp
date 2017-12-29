@@ -227,7 +227,7 @@ void test1() {
 		tfile = new File("pera(2).txt");
 		tfile->write(std::vector<byte>{'i', 'm', 'a'});
 		tfile->getAccessDescriptor()->add("ReadFile");
-		rndObject = tfile; // TODO: HERE IS RNDOBJECT!
+		rndObject = tfile; // HERE IS RNDOBJECT!
 		dDownloads->add(tfile);
 
 		gpu->add(gDocuments);
@@ -386,8 +386,9 @@ public:
 			std::cout << "..\n";
 		}
 		for (auto &&item : list) {
-			// TODO: add '/' if it is a folder
-			std::cout << item->getName() << std::endl;
+			std::cout << item->getName();
+			if (item->isFolder()) std::cout << "/";
+			std::cout << std::endl;
 		}
 	}
 
@@ -401,8 +402,7 @@ public:
 			return;
 		}
 		for (auto &&item : curr->getObjects()) {
-			// TODO: Check if folder
-			if (item->getName() == name) {
+			if (item->getName() == name && item->isFolder()) {
 				curr = (Folder *) item;
 				return;
 			}
@@ -428,8 +428,7 @@ public:
 
 	void echo(std::string name, std::vector<byte> data) {
 		for (auto &&item : curr->getObjects()) {
-			// TODO: check if !isFolder()
-			if (item->getName() == name) {
+			if (item->getName() == name && !item->isFolder()) {
 				Filesystem::Instance().writeFile((File *) item, data);
 				return;
 			}
@@ -439,9 +438,8 @@ public:
 
 	void cat(std::string name) {
 		for (auto &&item : curr->getObjects()) {
-			// TODO: check if !isFolder()
-			if (item->getName() == name) {
-				auto data = Filesystem::Instance().readFlie((File *) item);
+			if (item->getName() == name && !item->isFolder()) {
+				auto data = Filesystem::Instance().readFile((File *) item);
 				for (auto &&datum : data) {
 					std::cout << datum;
 				}
@@ -454,9 +452,8 @@ public:
 
 	void bytes(std::string name) {
 		for (auto &&item : curr->getObjects()) {
-			// TODO: check if !isFolder()
-			if (item->getName() == name) {
-				auto data = Filesystem::Instance().readFlie((File *) item);
+			if (item->getName() == name && !item->isFolder()) {
+				auto data = Filesystem::Instance().readFile((File *) item);
 				for (auto &&datum : data) {
 					std::cout << (int) datum << " ";
 				}
@@ -488,13 +485,13 @@ public:
 	}
 
 	FSObject *getItem(std::string dest) {
+		// UNSAFE
 		auto d = Filesystem::split(dest);
 		FSObject *it = curr;
 		while (d.size() > 0) {
-			// TODO: when you give it a/b/c it will find a/c if b doesn't exist Fix this!
+			// When you give it a/b/c it will find a/c if b doesn't exist
 			for (auto &&item : ((Folder *) it)->getObjects()) {
-				// TODO: check if isFolder()
-				if (item->getName() == d[0]) {
+				if (item->getName() == d[0] && item->isFolder()) {
 					it = item;
 					break;
 				}
@@ -505,17 +502,15 @@ public:
 	}
 
 	void cp(std::string src, std::string dest) {
-		// TODO: check existance
-		auto s = getItem(src);;
-		// TODO: check if folder
+		// UNSAFE
+		auto s = getItem(src);
 		Folder *d = (Folder *) getItem(dest);
 		Filesystem::Instance().copyPaste(s, d, Filesystem::split(dest).back());
 	}
 
 	void move(std::string src, std::string dest) {
-		// TODO: check existance
+		// UNSAFE
 		auto s = getItem(src);
-		// TODO: check if folder
 		Folder *d = (Folder *) getItem(dest);
 		Filesystem::Instance().move(s, d);
 	}
@@ -605,12 +600,30 @@ void test2() {
 	traverser.echo("numbers.txt", {1, 2, 3});
 	traverser.touch("text.txt");
 	traverser.echo("text.txt", {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!'});
-	traverser.chmod("text.txt", "ReadFile", false);
+	//traverser.chmod("text.txt", "ReadFile", false);
 	traverser.touch("pera.txt");
-	traverser.cp("text.txt", "Documents/test(copy).txt");
+	traverser.cp("text.txt", "Documents/text.txt");
 	traverser.move("Documents/pera.txt", "Music");
 	traverser.rm("text.txt");
-	
+	traverser.cd("Documents");
+	for (int i = 0; i < 82; ++i) {
+		std::string tname = "text";
+		tname.append(std::to_string(i));
+		tname.append(".txt");
+		traverser.cp("text.txt", tname);
+	}
+
+	std::cout << Filesystem::Instance().freeSpace() << std::endl;
+
+	auto test = Filesystem::Instance().openFolder("home/user");
+	if (test == nullptr) {
+		std::cout << "No such directory\n";
+	} else {
+		for (auto &&getObject :test->getObjects()) {
+			std::cout << getObject->getName() << " ";
+		}
+		std::cout << std::endl;
+	}
 
 	while (traverser.doCommand() == 0);
 }
